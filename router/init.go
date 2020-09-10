@@ -20,7 +20,7 @@ func Init() error {
 	router.Use(accessControlMiddleware)
 
 	for _, route := range Routes {
-		router.HandleFunc(route.Path, route.Handler).Methods(route.Methods...)
+		router.HandleFunc(route.Path, authenticationMiddleware(route)).Methods(route.Methods...)
 	}
 
 	log.Println("Server started at port:", config.Port)
