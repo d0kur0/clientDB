@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "local_password"
+    volumes:
+      - 'mariadb_data:/var/lib/mysql'
+
+  adminer:
+    links:
+      - db
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  redis:
+    image: 'docker.io/bitnami/redis:6.0-debian-10'
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=no
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+      - REDIS_PASSWORD=local_password
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+volumes:
+  redis_data:
+    driver: local
+  mariadb_data:
+    driver: local
