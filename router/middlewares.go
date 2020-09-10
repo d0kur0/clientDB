@@ -1,6 +1,9 @@
 package router
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 func accessControlMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -14,4 +17,14 @@ func accessControlMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func authenticationMiddleware(route Route) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if route.AuthNeed {
+			log.Println("check auth!!!1")
+		}
+
+		route.Handler(w, r)
+	}
 }
